@@ -23,8 +23,6 @@ A web-based Laboratory Information Management System (LIMS) designed to streamli
 - Node.js  
 - Express.js  
 - MongoDB (via Mongoose)  
-- dotenv (for env config)  
-- CORS and Body-Parser middleware  
 
 ---
 
@@ -87,7 +85,7 @@ Pull requests are welcome! For major changes, please open an issue first to disc
 
 ## 📄 License
 
-This project is open source and available under the [MIT License](LICENSE).
+This project is open source.
 
 ---
 
@@ -95,3 +93,15 @@ This project is open source and available under the [MIT License](LICENSE).
 
 **Lemuel Fernandes**  
 [LinkedIn](https://www.linkedin.com/in/lemuel-fernandes)
+
+**Aiswarya**
+[LinkedIn]
+
+**Vyshak**
+[LinkedIn]
+
+**Jon**
+[LinkedIn]
+
+**Sarah**
+[LinkedIn]
