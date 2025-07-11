@@ -28,24 +28,6 @@ A web-based Laboratory Information Management System (LIMS) designed to streamli
 
 ---
 
-## 📁 Folder Structure
-
-```
-lims/
-├── frontend/              # Static frontend files (HTML, CSS, JS)
-│   └── index.html
-├── backend/
-│   ├── models/
-│   │   └── Equipment.js
-│   ├── routes/
-│   │   └── equipment.js
-│   ├── server.js
-│   └── .env
-├── package.json
-└── README.md
-```
-
----
 
 ## 🔌 API Endpoints
 
