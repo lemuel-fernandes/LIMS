@@ -110,12 +110,17 @@
         font-size: 1.1rem;
         cursor: pointer;
         transition: background-color 0.3s;
+        margin-bottom: 10px;
     }
     .login-button:hover {
         background-color: #2563eb;
     }
+    .login-button:disabled {
+        background-color: #9ca3af;
+        cursor: not-allowed;
+    }
     .role-selection {
-        margin-top: 20px;
+        margin-bottom: 20px;
     }
     .role-selection label {
         display: block;
@@ -130,6 +135,38 @@
         border-radius: 8px;
         font-size: 1rem;
         background-color: white;
+    }
+    .error-message {
+        background-color: #fef2f2;
+        border: 1px solid #fecaca;
+        color: #dc2626;
+        padding: 10px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        font-size: 0.9rem;
+    }
+    .success-message {
+        background-color: #f0fdf4;
+        border: 1px solid #bbf7d0;
+        color: #16a34a;
+        padding: 10px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        font-size: 0.9rem;
+    }
+    .signup-link {
+        text-align: center;
+        margin-top: 20px;
+    }
+    .signup-link a {
+        color: #3b82f6;
+        text-decoration: none;
+    }
+    .signup-link a:hover {
+        text-decoration: underline;
+    }
+    .hidden {
+        display: none;
     }
   </style>
 </head>
@@ -151,15 +188,14 @@
       <div class="login-page">
         <div class="login-container">
           <h2>Welcome Back</h2>
-          <div style="background-color: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 0.9rem; color: #6c757d;">
-            <strong>Demo Credentials:</strong><br>
-            <strong>Lab InCharge:</strong> admin/admin123 or manager/manager123<br>
-            <strong>Lab Instructor:</strong> instructor/instructor123 or teacher/teacher123
-          </div>
+          
+          <div id="errorMessage" class="error-message hidden"></div>
+          <div id="successMessage" class="success-message hidden"></div>
+
           <form id="loginForm">
             <div class="form-group">
-              <label for="username">Username</label>
-              <input type="text" id="username" name="username" required />
+              <label for="email">Email</label>
+              <input type="email" id="email" name="email" required />
             </div>
             <div class="form-group">
               <label for="password">Password</label>
@@ -173,67 +209,22 @@
                 <option value="lab-instructor">Lab Instructor</option>
               </select>
             </div>
-            <button type="submit" class="login-button">Login</button>
+            <button type="submit" class="login-button" id="loginButton">Login</button>
           </form>
+
+          <div class="signup-link">
+            <p>Don't have an account? <a href="signup.html">Sign up here</a></p>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
-  <script>
-  document.getElementById('loginForm').addEventListener('submit', async function (e) {
-    e.preventDefault();
-
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
-    const role = document.getElementById('role').value;
-
-    if (!username || !password || !role) {
-      alert('Please fill in all fields');
-      return;
-    }
-
-    try {
-      const loginButton = document.querySelector('.login-button');
-      const originalText = loginButton.textContent;
-      loginButton.textContent = 'Logging in...';
-      loginButton.disabled = true;
-
-      // Simulate server-side login
-      const validCredentials = {
-        "admin": "admin123",
-        "manager": "manager123",
-        "instructor": "instructor123",
-        "teacher": "teacher123"
-      };
-
-      const isValid = validCredentials[username] === password;
-
-      loginButton.textContent = originalText;
-      loginButton.disabled = false;
-
-      if (isValid) {
-        if (role === 'lab-incharge') {
-          window.location.href = 'lab-incharge-dashboard.html';
-        } else if (role === 'lab-instructor') {
-          window.location.href = 'lab-instructor-dashboard.html';
-        } else {
-          alert('Invalid role selection.');
-        }
-      } else {
-        alert('Invalid username or password.');
-      }
-
-    } catch (error) {
-      console.error('Login error:', error);
-      alert('Login failed. Please try again.');
-
-      const loginButton = document.querySelector('.login-button');
-      loginButton.textContent = 'Login';
-      loginButton.disabled = false;
-    }
-  });
-</script>
-
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  
+  <!-- Include separate JavaScript file -->
+  <script src="login.js"></script>
 </body>
 </html>
