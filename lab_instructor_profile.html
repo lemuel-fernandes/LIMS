@@ -1,0 +1,66 @@
+<!-- ✅ Profile Page (Common) -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Profile | LIMS</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800">
+  <div class="flex min-h-screen">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white shadow p-6">
+      <div class="flex items-center space-x-2 mb-8">
+        <img src="https://img.icons8.com/ios/50/lab-items.png" alt="LIMS logo" class="w-6 h-6">
+        <h1 class="text-2xl font-bold">LIMS</h1>
+      </div>
+      <nav class="space-y-4">
+        <a href="#" class="block font-semibold">Dashboard</a>
+        <a href="#" class="block text-blue-600">Profile</a>
+        <a href="#" class="block">Settings</a>
+      </nav>
+    </aside>
+
+    <!-- Profile Content -->
+    <main class="flex-1 p-8">
+      <h2 class="text-2xl font-bold mb-6">Profile Overview</h2>
+
+      <div class="bg-white p-6 rounded shadow mb-6">
+        <div class="flex items-center space-x-6">
+          <img src="https://img.icons8.com/ios/100/user-male-circle.png" alt="Profile Pic" class="w-24 h-24 rounded-full">
+          <div>
+            <h3 class="text-xl font-semibold">Linu Lonappan</h3>
+            <p class="text-gray-600">Lab Instructor</p>
+            <p class="text-gray-600">Department: Computer Science</p>
+            <p class="text-gray-600">Employee ID: IN12345</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div class="bg-white p-4 rounded shadow">
+          <h4 class="font-semibold">Experiments Conducted</h4>
+          <p class="text-2xl font-bold">56</p>
+        </div>
+        <div class="bg-white p-4 rounded shadow">
+          <h4 class="font-semibold">Equipment Issued</h4>
+          <p class="text-2xl font-bold">212</p>
+        </div>
+        <div class="bg-white p-4 rounded shadow">
+          <h4 class="font-semibold">Equipment Returned</h4>
+          <p class="text-2xl font-bold">207</p>
+        </div>
+      </div>
+
+      <div class="bg-white p-6 rounded shadow">
+        <h4 class="text-lg font-semibold mb-4">Recent Activity</h4>
+        <ul class="list-disc ml-5 space-y-2 text-sm text-gray-700">
+          <li>Marked 3 items as returned - July 17</li>
+          <li>Issued equipment to batch 1BTCSA/ML A-1 - July 16</li>
+          <li>Updated status to Damaged for 2 wires - July 14</li>
+        </ul>
+      </div>
+    </main>
+  </div>
+</body>
+</html>
