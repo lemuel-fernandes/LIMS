@@ -6,88 +6,265 @@
   <title>Lab Usage Statistics - LIMS</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <style>
+    /* General styles from the theme */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
     body {
-      background-color: #f5f8ff;
-      font-family: 'Segoe UI', sans-serif;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background-color: #f8f9fa; /* Lighter background for main content */
+        display: flex;
+        min-height: 100vh;
     }
 
+    /* Sidebar styles from the theme */
     .sidebar {
-      width: 250px;
-      background: linear-gradient(to bottom, #0d6efd, #3a8bff);
-      height: 100vh;
-      position: fixed;
-      color: white;
+        width: 250px;
+        background-color: #1a1a1a; /* Dark sidebar */
+        color: white;
+        padding: 20px 0;
+        position: fixed; /* Keep sidebar fixed */
+        height: 100vh; /* Full height */
     }
 
-    .sidebar .nav-link {
-      color: #cfe2ff;
-      padding: 15px;
-      font-weight: 500;
+    .logo {
+        display: flex;
+        align-items: center;
+        padding: 0 20px 30px;
+        font-size: 24px;
+        font-weight: bold;
+        color: #3b82f6; /* Blue for the logo text */
     }
 
-    .sidebar .nav-link.active {
-      background-color: #084298;
-      color: #fff;
-      border-left: 4px solid #ffc107;
+    .logo i {
+        margin-right: 10px;
+        font-size: 28px;
     }
 
+    .nav-item { /* Renamed from .sidebar .nav-link for consistency */
+        display: flex;
+        align-items: center;
+        padding: 15px 20px;
+        color: #ccc; /* Lighter grey for inactive links */
+        text-decoration: none;
+        transition: all 0.3s;
+        cursor: pointer;
+    }
+
+    .nav-item:hover {
+        background-color: #333; /* Darker on hover */
+        color: white;
+    }
+
+    .nav-item.active {
+        background-color: #333; /* Darker for active link */
+        color: white;
+        border-left: 4px solid #3b82f6; /* Blue active indicator */
+    }
+
+    .nav-item i {
+        margin-right: 15px;
+        width: 20px;
+    }
+
+    /* User profile in sidebar */
+    .user-info {
+        display: flex;
+        align-items: center;
+        padding: 20px;
+        margin-top: auto; /* Push to bottom */
+        border-top: 1px solid #333;
+    }
+
+    .user-info img {
+        border-radius: 50%;
+        margin-right: 10px;
+        border: 2px solid #3b82f6; /* Blue border for avatar */
+    }
+
+    .user-info strong {
+        color: white;
+    }
+
+    .user-info small {
+        color: #ccc;
+    }
+
+    /* Main content area */
     .main-content {
-      margin-left: 250px;
-      padding: 40px;
+        flex: 1;
+        margin-left: 250px; /* Offset for the fixed sidebar */
+        padding: 30px;
+        /* Removed max-width to allow content to fill available space */
     }
 
+    /* Header styles */
+    .header {
+        margin-bottom: 30px;
+        padding-bottom: 15px; /* Add padding for separation */
+        border-bottom: 1px solid #eee; /* Subtle border */
+    }
+
+    .header h5 {
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 5px; /* Adjust margin */
+    }
+
+    .header h3 {
+        font-size: 24px;
+        color: #1a1a1a;
+        margin-top: 0; /* Reset default margin */
+    }
+
+    /* Metric Cards */
     .metric-card {
-      background: linear-gradient(135deg, #ffffff, #e9f0ff);
-      border-radius: 15px;
-      padding: 20px 30px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      transition: transform 0.2s ease;
+        background: white; /* White background for metric cards */
+        border-radius: 12px;
+        padding: 20px 30px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Softer shadow */
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: transform 0.2s ease, box-shadow 0.2s ease; /* Added box-shadow transition */
+        min-height: 100px; /* Ensure consistent height */
     }
 
     .metric-card:hover {
-      transform: scale(1.01);
+        transform: translateY(-3px); /* Lift effect on hover */
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
     }
 
     .metric-title {
-      font-weight: 600;
-      font-size: 1.2rem;
+        font-weight: 600;
+        font-size: 1rem; /* Slightly smaller title */
+        color: #666; /* Grey for titles */
     }
 
     .metric-value {
-      font-size: 2rem;
-      font-weight: bold;
+        font-size: 2.2rem; /* Slightly larger value */
+        font-weight: bold;
+        margin-top: 5px;
     }
 
-    .text-green { color: #198754; }
-    .text-yellow { color: #ffc107; }
-    .text-red { color: #dc3545; }
+    /* Consistent colors for status/metrics */
+    .text-green { color: #16a34a; }
+    .text-yellow { color: #d97706; }
+    .text-red { color: #dc2626; }
+    .text-blue { color: #3b82f6; } /* Consistent blue for primary text */
 
+    /* Chart Containers */
     .chart-container {
-      background: #fff;
-      border-radius: 15px;
-      padding: 20px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-      margin-bottom: 30px;
+        background: #fff;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-bottom: 30px;
+        /* Set a fixed height for the canvas container to prevent exceeding max size */
+        height: 350px; /* Default height for charts */
+        display: flex; /* Use flex to center canvas vertically */
+        flex-direction: column;
     }
 
-    h3, h5 {
-      color: #333;
+    .chart-container.line-chart {
+        height: 450px; /* Taller for the line chart */
+    }
+
+    .chart-container h5 {
+        color: #1a1a1a; /* Darker heading for charts */
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .chart-container h5 i {
+        color: #3b82f6; /* Blue icon */
+    }
+
+    /* Canvas specific styling to ensure it fills its container */
+    canvas {
+        flex-grow: 1; /* Allow canvas to grow and fill available space in flex container */
+        width: 100% !important; /* Ensure canvas takes full width of its parent */
+        height: 100% !important; /* Ensure canvas takes full height of its parent */
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .sidebar {
+            width: 100%;
+            height: auto;
+            position: relative;
+        }
+        .main-content {
+            margin-left: 0;
+            padding: 20px;
+        }
+        .header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .user-info {
+            position: relative;
+            bottom: auto;
+            left: auto;
+            margin-top: 20px;
+            width: 100%;
+            justify-content: center;
+        }
+        .chart-container, .chart-container.line-chart {
+            height: 300px; /* Adjust height for smaller screens */
+        }
+    }
+
+    /* Profile picture size adjustment */
+    .user-avatar {
+        width: 32px; /* Reduced size */
+        height: 32px; /* Reduced size */
+        border-radius: 50%;
+        margin-right: 10px;
+        border: 2px solid #3b82f6; /* Blue border for avatar */
     }
   </style>
 </head>
 <body>
 
-  <div class="sidebar d-flex flex-column p-3">
-    <h4 class="mb-4">🔬 LIMS</h4>
-    <a href="#" class="nav-link">Dashboard</a>
-    <a href="#" class="nav-link active">Statistics</a>
-    <a href="#" class="nav-link">Settings</a>
-    <div class="mt-auto d-flex align-items-center">
-      <img src="https://cdn-icons-png.flaticon.com/512/921/921347.png" class="rounded-circle me-2" alt="User" width="40" height="40"/>
+  <div class="sidebar d-flex flex-column">
+    <div class="logo">
+      <i class="fas fa-flask"></i>
+      LIMS
+    </div>
+
+    <a href="#" class="nav-item">
+      <i class="fas fa-tachometer-alt"></i>
+      Dashboard
+    </a>
+    <a href="#" class="nav-item active">
+      <i class="fas fa-chart-bar"></i>
+      Statistics
+    </a>
+    <a href="#" class="nav-item">
+      <i class="fas fa-cog"></i>
+      Settings
+    </a>
+    <a href="#" class="nav-item">
+        <i class="fas fa-users"></i>
+        Users
+    </a>
+    <a href="#" class="nav-item">
+        <i class="fas fa-microscope"></i>
+        Experiments
+    </a>
+
+    <div class="user-info mt-auto">
+      <img src="https://cdn-icons-png.flaticon.com/512/921/921347.png" alt="User" class="user-avatar">
       <div>
         <strong>Linu Lonappan</strong><br />
         <small>Lab Incharge</small>
@@ -96,8 +273,10 @@
   </div>
 
   <div class="main-content">
-    <h5>Hello <span class="text-primary">Linu Lonappan</span>,</h5>
-    <h3 class="mb-4">Lab Usage Statistics</h3>
+    <div class="header">
+        <h5>Hello <span class="text-blue">Linu Lonappan</span>,</h5>
+        <h3>Lab Usage Statistics</h3>
+    </div>
 
     <div class="row g-4 mb-4">
       <div class="col-md-4">
@@ -106,7 +285,9 @@
             <div class="metric-title">Total Equipments</div>
             <div class="metric-value text-green">120</div>
           </div>
-          <div style="font-size: 2rem;">🧪</div>
+          <div style="font-size: 2rem; color: #16a34a;">
+            <i class="fas fa-vials"></i>
+          </div>
         </div>
       </div>
       <div class="col-md-4">
@@ -115,7 +296,9 @@
             <div class="metric-title">Equipments in Use</div>
             <div class="metric-value text-yellow">85</div>
           </div>
-          <div style="font-size: 2rem;">⚙️</div>
+          <div style="font-size: 2rem; color: #d97706;">
+            <i class="fas fa-cogs"></i>
+          </div>
         </div>
       </div>
       <div class="col-md-4">
@@ -124,7 +307,9 @@
             <div class="metric-title">Failing Equipments</div>
             <div class="metric-value text-red">5</div>
           </div>
-          <div style="font-size: 2rem;">❌</div>
+          <div style="font-size: 2rem; color: #dc2626;">
+            <i class="fas fa-times-circle"></i>
+          </div>
         </div>
       </div>
     </div>
@@ -132,19 +317,19 @@
     <div class="row g-4">
       <div class="col-md-6">
         <div class="chart-container">
-          <h5 class="mb-3 text-primary">Top Used Equipments</h5>
+          <h5><i class="fas fa-chart-bar"></i> Top Used Equipments</h5>
           <canvas id="barChart"></canvas>
         </div>
       </div>
       <div class="col-md-6">
         <div class="chart-container">
-          <h5 class="mb-3 text-primary">Student Usage per Equipment</h5>
+          <h5><i class="fas fa-chart-pie"></i> Student Usage per Equipment</h5>
           <canvas id="pieChart"></canvas>
         </div>
       </div>
       <div class="col-md-12">
-        <div class="chart-container">
-          <h5 class="mb-3 text-primary">Labs With Highest Load</h5>
+        <div class="chart-container line-chart">
+          <h5><i class="fas fa-chart-line"></i> Labs With Highest Load</h5>
           <canvas id="lineChart"></canvas>
         </div>
       </div>
@@ -160,12 +345,40 @@
         datasets: [{
           label: 'Usage Count',
           data: [35, 32, 25, 18, 14],
-          backgroundColor: '#0d6efd'
+          backgroundColor: '#3b82f6', /* Consistent blue */
+          borderRadius: 4, /* Slightly rounded bars */
         }]
       },
       options: {
         responsive: true,
-        scales: { y: { beginAtZero: true } }
+        maintainAspectRatio: false, /* Allow charts to adjust more freely */
+        scales: {
+          y: {
+            beginAtZero: true,
+            grid: { color: '#e0e6ed', drawBorder: false }, /* Lighter grid lines, no border */
+            ticks: { color: '#7f8c8d' } /* Muted tick labels */
+          },
+          x: {
+            grid: { display: false }, /* No vertical grid lines */
+            ticks: { color: '#7f8c8d' }
+          }
+        },
+        plugins: {
+            legend: {
+                labels: {
+                    color: '#7f8c8d',
+                    font: { size: 14 }
+                }
+            },
+            tooltip: {
+                backgroundColor: 'rgba(44, 62, 80, 0.9)', /* Darker tooltip background */
+                titleColor: '#fff',
+                bodyColor: '#fff',
+                borderColor: '#3b82f6',
+                borderWidth: 1,
+                cornerRadius: 5
+            }
+        }
       }
     });
 
@@ -177,12 +390,30 @@
         datasets: [{
           label: 'Student Usage',
           data: [40, 30, 30],
-          backgroundColor: ['#198754', '#ffc107', '#dc3545']
+          backgroundColor: ['#3b82f6', '#16a34a', '#d97706'], /* Varied colors from the palette */
+          hoverOffset: 10 /* Slight pop-out effect on hover */
         }]
       },
       options: {
         responsive: true,
-        plugins: { legend: { position: 'bottom' } }
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: {
+                    color: '#7f8c8d',
+                    font: { size: 14 }
+                }
+            },
+            tooltip: {
+                backgroundColor: 'rgba(44, 62, 80, 0.9)',
+                titleColor: '#fff',
+                bodyColor: '#fff',
+                borderColor: '#3b82f6',
+                borderWidth: 1,
+                cornerRadius: 5
+            }
+        }
       }
     });
 
@@ -190,21 +421,51 @@
     new Chart(ctxLine, {
       type: 'line',
       data: {
-        labels: ['EEE Lab', 'CS Lab', 'Physics Lab', 'Robotics Lab'],
+        labels: ['EEE Lab', 'CS Lab', 'Physics Lab', 'Robotics Lab', 'Chemistry Lab'], /* Added one more label */
         datasets: [{
           label: 'Devices in Use',
-          data: [32, 27, 22, 18],
-          borderColor: 'purple',
-          backgroundColor: 'transparent',
-          tension: 0.3,
-          pointBackgroundColor: 'purple',
-          borderWidth: 2
+          data: [32, 27, 22, 18, 25], /* Added one more data point */
+          borderColor: '#3b82f6',
+          backgroundColor: 'rgba(59, 130, 246, 0.15)', /* Lighter fill */
+          tension: 0.4, /* Smoother curves */
+          pointBackgroundColor: '#3b82f6',
+          pointBorderColor: '#fff', /* White border for points */
+          pointBorderWidth: 2,
+          pointRadius: 5, /* Slightly larger points */
+          borderWidth: 3 /* Thicker line */
         }]
       },
       options: {
         responsive: true,
-        plugins: { legend: { position: 'top' } },
-        scales: { y: { beginAtZero: true } }
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'top',
+                labels: {
+                    color: '#7f8c8d',
+                    font: { size: 14 }
+                }
+            },
+            tooltip: {
+                backgroundColor: 'rgba(44, 62, 80, 0.9)',
+                titleColor: '#fff',
+                bodyColor: '#fff',
+                borderColor: '#3b82f6',
+                borderWidth: 1,
+                cornerRadius: 5
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                grid: { color: '#e0e6ed', drawBorder: false },
+                ticks: { color: '#7f8c8d' }
+            },
+            x: {
+                grid: { display: false },
+                ticks: { color: '#7f8c8d' }
+            }
+        }
       }
     });
   </script>
