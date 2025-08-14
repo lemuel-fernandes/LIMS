@@ -1,4 +1,15 @@
+// require('dotenv').config();
+// var firebase = require('firebase/app');
 // Firebase configuration
+// const firebaseConfig = {
+//   apiKey: process.env.apiKey,
+//   authDomain: process.env.authDomain,
+//   projectId: process.env.projectId,
+//   storageBucket: process.env.storageBucket,
+//   messagingSenderId: process.env.messagingSenderId,
+//   appId: process.env.appId,
+//   measurementId: process.env.measurementId
+// };
 const firebaseConfig = {
   apiKey: "AIzaSyBURPq6gDE-Z_g8Q3AhSlg2Gb1_Q-FunpM",
   authDomain: "lims-7ac2a.firebaseapp.com",
