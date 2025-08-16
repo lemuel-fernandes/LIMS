@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIMS - Departments</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8f9fa;
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .sidebar {
+            width: 250px;
+            background-color: #1a1a1a;
+            color: white;
+            padding: 20px 0;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            padding: 0 20px 30px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #3b82f6;
+        }
+        
+        .logo i {
+            margin-right: 10px;
+            font-size: 28px;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: #ccc;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .nav-item.active {
+            background-color: #333;
+            color: white;
+        }
+        
+        .nav-item:hover {
+            background-color: #333;
+            color: white;
+        }
+        
+        .nav-item i {
+            margin-right: 15px;
+            width: 20px;
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 30px;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .header-left h1 {
+            font-size: 24px;
+            color: #1a1a1a;
+            margin-bottom: 5px;
+        }
+        
+        .header-left p {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 8px 12px;
+        }
+        
+        .search-box input {
+            border: none;
+            outline: none;
+            margin-left: 8px;
+            font-size: 14px;
+        }
+        
+        .departments-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .department-card {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .department-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .department-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        
+        .department-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 16px;
+            font-size: 24px;
+            background-color: #dcfce7;
+            color: #16a34a;
+        }
+        
+        .department-info h3 {
+            font-size: 18px;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+        }
+        
+        .department-info p {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .department-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 16px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 12px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .stat-item h4 {
+            font-size: 20px;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+        }
+        
+        .stat-item p {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .add-department-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 15px 25px;
+            font-size: 14px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            transition: all 0.3s;
+        }
+        
+        .add-department-btn:hover {
+            background-color: #2563eb;
+            transform: translateY(-2px);
+        }
+        
+        .user-profile {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    display: flex;
+    align-items: center;
+    background: white;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    gap: 8px;
+}
+
+/* Arrow rotation when active */
+.user-profile.active .profile-arrow {
+    transform: rotate(180deg);
+    transition: transform 0.3s ease;
+}
+
+.profile-arrow {
+    margin-left: auto;
+    color: #666;
+    transition: transform 0.3s ease;
+}
+
+/* Dropdown styling */
+.profile-dropdown {
+    position: absolute;
+    bottom: 60px; /* keeps dropdown above button */
+    left: 0;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    overflow: hidden;
+    width: 180px;
+    display: none; /* hide by default */
+    flex-direction: column;
+    z-index: 2000;
+}
+
+/* Show dropdown when active */
+.user-profile.active .profile-dropdown {
+    display: flex;
+    animation: fadeIn 0.2s ease-in-out;
+}
+
+/* Dropdown items */
+.profile-menu-item {
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #333;
+    text-decoration: none;
+    font-size: 14px;
+    transition: background 0.2s;
+}
+
+.profile-menu-item:hover {
+    background-color: #f5f5f5;
+}
+
+/* Fade animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">
+            <i class="fas fa-flask"></i>
+            LIMS
+        </div>
+        
+        <a class="nav-item" href="lab-incharge-dashboard.html">
+            <i class="fas fa-tachometer-alt"></i>
+            Dashboard
+        </a>
+
+        <a class="nav-item active" href="lab_incharge_departments.html">
+            <i class="fas fa-building"></i>
+            Departments
+        </a>
+
+        <a class="nav-item" href="lab_incharge_statistics.html">
+            <i class="fas fa-chart-bar"></i>
+            Statistics
+        </a>
+
+        <a class="nav-item" href="lab_incharge_settings.html">
+            <i class="fas fa-cog"></i>
+            Settings
+        </a>
+
+        <a class="nav-item" href="lab_incharge_report.html">
+            <i class="fas fa-file-alt"></i>
+            Report
+        </a>
+    </div>
+    
+    <div class="main-content">
+        <div class="header">
+            <div class="header-left">
+                <h1>Department Management</h1>
+                <p>Manage and monitor all laboratory departments</p>
+            </div>
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search departments">
+            </div>
+        </div>
+        
+        <div class="departments-grid">
+            <div class="department-card">
+                <div class="department-header">
+                    <div class="department-icon">
+                        <i class="fas fa-microscope"></i>
+                    </div>
+                    <div class="department-info">
+                        <h3>Microbiology Lab</h3>
+                        <p>Dr. Sarah Johnson - Head</p>
+                    </div>
+                </div>
+                <div class="department-stats">
+                    <div class="stat-item">
+                        <h4>45</h4>
+                        <p>Equipment</p>
+                    </div>
+                    <div class="stat-item">
+                        <h4>12</h4>
+                        <p>Staff</p>
+                    </div>
+                    <div class="stat-item">
+                        <h4>98%</h4>
+                        <p>Uptime</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="department-card">
+                <div class="department-header">
+                    <div class="department-icon">
+                        <i class="fas fa-atom"></i>
+                    </div>
+                    <div class="department-info">
+                        <h3>Chemistry Lab</h3>
+                        <p>Prof. Michael Chen - Head</p>
+                    </div>
+                </div>
+                <div class="department-stats">
+                    <div class="stat-item">
+                        <h4>38</h4>
+                        <p>Equipment</p>
+                    </div>
+                    <div class="stat-item">
+                        <h4>8</h4>
+                        <p>Staff</p>
+                    </div>
+                    <div class="stat-item">
+                        <h4>95%</h4>
+                        <p>Uptime</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="department-card">
+                <div class="department-header">
+                    <div class="department-icon">
+                        <i class="fas fa-dna"></i>
+                    </div>
+                    <div class="department-info">
+                        <h3>Genetics Lab</h3>
+                        <p>Dr. Emily Rodriguez - Head</p>
+                    </div>
+                </div>
+                <div class="department-stats">
+                    <div class="stat-item">
+                        <h4>28</h4>
+                        <p>Equipment</p>
+                    </div>
+                    <div class="stat-item">
+                        <h4>6</h4>
+                        <p>Staff</p>
+                    </div>
+                    <div class="stat-item">
+                        <h4>92%</h4>
+                        <p>Uptime</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="department-card">
+                <div class="department-header">
+                    <div class="department-icon">
+                        <i class="fas fa-microscope"></i>
+                    </div>
+                    <div class="department-info">
+                        <h3>Physics Lab</h3>
+                        <p>Dr. Robert Wilson - Head</p>
+                    </div>
+                </div>
+                <div class="department-stats">
+                    <div class="stat-item">
+                        <h4>30</h4>
+                        <p>Equipment</p>
+                    </div>
+                    <div class="stat-item">
+                        <h4>10</h4>
+                        <p>Staff</p>
+                    </div>
+                    <div class="stat-item">
+                        <h4>97%</h4>
+                        <p>Uptime</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <button class="add-department-btn" onclick="addDepartment()">
+            <i class="fas fa-plus"></i>
+            Add Department
+        </button>
+        
+        <div class="user-profile" onclick="toggleProfile()">
+    <img src="/placeholder.svg?height=40&width=40" alt="User" class="user-avatar">
+    <div class="user-info">
+        <h4>Linu Lonappan</h4>
+        <p>Lab Instructor</p>
+    </div>
+    <i class="fas fa-chevron-up profile-arrow"></i>
+    
+    <!-- Profile dropdown menu -->
+    <div class="profile-dropdown">
+        <a href="lab_incharge_profie.html" class="profile-menu-item">
+            <i class="fas fa-user"></i>
+            <span>View Profile</span>
+        </a>
+        <a href="lab_incharge_settings.html" class="profile-menu-item">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+        </a>
+        <div class="profile-menu-item" onclick="handleLogout()">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Logout</span>
+        </div>
+    </div>
+</div>
+    <script>
+        function addDepartment() {
+            alert('Add Department functionality would be implemented here');
+        }
+        function toggleProfile() {
+    const profile = document.querySelector('.user-profile');
+    profile.classList.toggle('active');
+}
+
+function handleLogout() {
+    if(confirm('Are you sure you want to logout?')) {
+        // Add logout logic here
+        window.location.href = '../login.html'; // Adjust path as needed
+    }
+}
+
+// Close profile dropdown when clicking outside
+document.addEventListener('click', function(event) {
+    const profile = document.querySelector('.user-profile');
+    if (!profile.contains(event.target)) {
+        profile.classList.remove('active');
+    }
+});
+    </script>
+</body>
+</html>

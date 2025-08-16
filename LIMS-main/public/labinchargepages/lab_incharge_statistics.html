@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIMS - Statistics</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8f9fa;
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .sidebar {
+            width: 250px;
+            background-color: #1a1a1a;
+            color: white;
+            padding: 20px 0;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            padding: 0 20px 30px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #3b82f6;
+        }
+        
+        .logo i {
+            margin-right: 10px;
+            font-size: 28px;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: #ccc;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .nav-item.active {
+            background-color: #333;
+            color: white;
+        }
+        
+        .nav-item:hover {
+            background-color: #333;
+            color: white;
+        }
+        
+        .nav-item i {
+            margin-right: 15px;
+            width: 20px;
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 30px;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .header-left h1 {
+            font-size: 24px;
+            color: #1a1a1a;
+            margin-bottom: 5px;
+        }
+        
+        .header-left p {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .time-filter {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .filter-btn {
+            padding: 8px 16px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        
+        .filter-btn.active {
+            background-color: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-card h3 {
+            font-size: 28px;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+        }
+        
+        .stat-card p {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        
+        .stat-trend {
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+        }
+        
+        .stat-trend.positive {
+            color: #16a34a;
+        }
+        
+        .stat-trend.negative {
+            color: #dc2626;
+        }
+        
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .chart-card {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .chart-title {
+            font-size: 18px;
+            color: #1a1a1a;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .summary-card {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .summary-header {
+            font-size: 18px;
+            color: #1a1a1a;
+            margin-bottom: 16px;
+        }
+        
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+        
+        .summary-label {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .summary-value {
+            font-size: 16px;
+            font-weight: 500;
+            color: #1a1a1a;
+        }
+        
+        .user-profile {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    display: flex;
+    align-items: center;
+    background: white;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    gap: 8px;
+}
+
+/* Arrow rotation when active */
+.user-profile.active .profile-arrow {
+    transform: rotate(180deg);
+    transition: transform 0.3s ease;
+}
+
+.profile-arrow {
+    margin-left: auto;
+    color: #666;
+    transition: transform 0.3s ease;
+}
+
+/* Dropdown styling */
+.profile-dropdown {
+    position: absolute;
+    bottom: 60px; /* keeps dropdown above button */
+    left: 0;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    overflow: hidden;
+    width: 180px;
+    display: none; /* hide by default */
+    flex-direction: column;
+    z-index: 2000;
+}
+
+/* Show dropdown when active */
+.user-profile.active .profile-dropdown {
+    display: flex;
+    animation: fadeIn 0.2s ease-in-out;
+}
+
+/* Dropdown items */
+.profile-menu-item {
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #333;
+    text-decoration: none;
+    font-size: 14px;
+    transition: background 0.2s;
+}
+
+.profile-menu-item:hover {
+    background-color: #f5f5f5;
+}
+
+/* Fade animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">
+            <i class="fas fa-flask"></i>
+            LIMS
+        </div>
+        
+        <a class="nav-item" href="lab-incharge-dashboard.html">
+            <i class="fas fa-tachometer-alt"></i>
+            Dashboard
+        </a>
+
+        <a class="nav-item" href="lab_incharge_departments.html">
+            <i class="fas fa-building"></i>
+            Departments
+        </a>
+
+        <a class="nav-item active" href="lab_incharge_statistics.html">
+            <i class="fas fa-chart-bar"></i>
+            Statistics
+        </a>
+
+        <a class="nav-item" href="lab_incharge_settings.html">
+            <i class="fas fa-cog"></i>
+            Settings
+        </a>
+
+        <a class="nav-item" href="lab_incharge_report.html">
+            <i class="fas fa-file-alt"></i>
+            Report
+        </a>
+    </div>
+    
+    <div class="main-content">
+        <div class="header">
+            <div class="header-left">
+                <h1>Statistics & Analytics</h1>
+                <p>Comprehensive insights and performance metrics</p>
+            </div>
+            <div class="time-filter">
+                <button class="filter-btn" onclick="setFilter('7d')">7 Days</button>
+                <button class="filter-btn active" onclick="setFilter('30d')">30 Days</button>
+                <button class="filter-btn" onclick="setFilter('90d')">90 Days</button>
+                <button class="filter-btn" onclick="setFilter('1y')">1 Year</button>
+            </div>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>1,247</h3>
+                <p>Total Tests Completed</p>
+                <div class="stat-trend positive">
+                    <i class="fas fa-arrow-up"></i>
+                    12.5% vs last month
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <h3>98.2%</h3>
+                <p>Equipment Uptime</p>
+                <div class="stat-trend positive">
+                    <i class="fas fa-arrow-up"></i>
+                    2.1% vs last month
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <h3>4.2 hrs</h3>
+                <p>Avg. Test Duration</p>
+                <div class="stat-trend negative">
+                    <i class="fas fa-arrow-down"></i>
+                    8.3% vs last month
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <h3>85.7%</h3>
+                <p>Resource Utilization</p>
+                <div class="stat-trend positive">
+                    <i class="fas fa-arrow-up"></i>
+                    5.2% vs last month
+                </div>
+            </div>
+        </div>
+        
+        <div class="charts-grid">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title">Equipment Usage Over Time</div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="usageChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title">Department Distribution</div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="departmentChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <div class="summary-grid">
+            <div class="summary-card">
+                <div class="summary-header">Equipment Status Summary</div>
+                <div class="summary-item">
+                    <span class="summary-label">Working Equipment</span>
+                    <span class="summary-value">127</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Under Maintenance</span>
+                    <span class="summary-value">8</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Out of Service</span>
+                    <span class="summary-value">6</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Total Equipment</span>
+                    <span class="summary-value">141</span>
+                </div>
+            </div>
+            
+            <div class="summary-card">
+                <div class="summary-header">Top Performing Departments</div>
+                <div class="summary-item">
+                    <span class="summary-label">Microbiology</span>
+                    <span class="summary-value">98.5%</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Chemistry</span>
+                    <span class="summary-value">95.2%</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Physics</span>
+                    <span class="summary-value">94.8%</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Genetics</span>
+                    <span class="summary-value">92.1%</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="user-profile" onclick="toggleProfile()">
+    <img src="/placeholder.svg?height=40&width=40" alt="User" class="user-avatar">
+    <div class="user-info">
+        <h4>Linu Lonappan</h4>
+        <p>Lab Instructor</p>
+    </div>
+    <i class="fas fa-chevron-up profile-arrow"></i>
+    
+    <!-- Profile dropdown menu -->
+    <div class="profile-dropdown">
+        <a href="lab_incharge_profie.html" class="profile-menu-item">
+            <i class="fas fa-user"></i>
+            <span>View Profile</span>
+        </a>
+        <a href="lab_incharge_settings.html" class="profile-menu-item">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+        </a>
+        <div class="profile-menu-item" onclick="handleLogout()">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Logout</span>
+        </div>
+    </div>
+</div>
+
+    <script>
+        // Usage Chart
+        const usageCtx = document.getElementById('usageChart').getContext('2d');
+        const usageChart = new Chart(usageCtx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+                datasets: [{
+                    label: 'Equipment Usage %',
+                    data: [85, 88, 82, 90, 87, 93, 89],
+                    borderColor: '#3b82f6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100
+                    }
+                }
+            }
+        });
+
+        // Department Chart
+        const deptCtx = document.getElementById('departmentChart').getContext('2d');
+        const departmentChart = new Chart(deptCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Microbiology', 'Chemistry', 'Physics', 'Genetics'],
+                datasets: [{
+                    data: [45, 38, 30, 28],
+                    backgroundColor: ['#16a34a', '#3b82f6', '#f59e0b', '#ef4444'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+
+        function setFilter(period) {
+            // Remove active class from all buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+            
+            // Here you would typically update the charts with new data
+            console.log('Filter set to:', period);
+        }
+        function toggleProfile() {
+    const profile = document.querySelector('.user-profile');
+    profile.classList.toggle('active');
+}
+
+function handleLogout() {
+    if(confirm('Are you sure you want to logout?')) {
+        // Add logout logic here
+        window.location.href = '../login.html'; // Adjust path as needed
+    }
+}
+
+// Close profile dropdown when clicking outside
+document.addEventListener('click', function(event) {
+    const profile = document.querySelector('.user-profile');
+    if (!profile.contains(event.target)) {
+        profile.classList.remove('active');
+    }
+});
+    </script>
+</body>
+</html>
