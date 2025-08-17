@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIMS - Profile</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8f9fa;
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .sidebar {
+            width: 250px;
+            background-color: #1a1a1a;
+            color: white;
+            padding: 20px 0;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            padding: 0 20px 30px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #3b82f6;
+        }
+        
+        .logo i {
+            margin-right: 10px;
+            font-size: 28px;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: #ccc;
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .nav-item:hover {
+            background-color: #333;
+            color: white;
+        }
+        
+        .nav-item.active {
+            background-color: #333;
+            color: white;
+        }
+        
+        .nav-item i {
+            margin-right: 15px;
+            width: 20px;
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            max-width: 1200px;
+        }
+        
+        .header {
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            color: #1a1a1a;
+            margin-bottom: 5px;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .profile-container {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .profile-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .profile-header {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            padding: 30px;
+            text-align: center;
+            color: white;
+        }
+        
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: #666;
+        }
+        
+        .profile-name {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .profile-role {
+            font-size: 16px;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+        
+        .profile-stats {
+            display: flex;
+            justify-content: space-around;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+        
+        .profile-info {
+            padding: 30px;
+        }
+        
+        .info-section {
+            margin-bottom: 25px;
+        }
+        
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .info-item:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .info-value {
+            color: #1a1a1a;
+            font-weight: 500;
+        }
+        
+        .activity-section {
+            grid-column: 1 / -1;
+        }
+        
+        .activity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .activity-title {
+            font-size: 18px;
+            color: #1a1a1a;
+            font-weight: 600;
+        }
+        
+        .activity-filter {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .filter-btn {
+            padding: 6px 12px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .filter-btn.active {
+            background-color: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+        
+        .activity-list {
+            padding: 20px;
+        }
+        
+        .activity-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 16px;
+        }
+        
+        .activity-icon.issued {
+            background-color: #fef3c7;
+            color: #d97706;
+        }
+        
+        .activity-icon.returned {
+            background-color: #dcfce7;
+            color: #16a34a;
+        }
+        
+        .activity-icon.damaged {
+            background-color: #fee2e2;
+            color: #dc2626;
+        }
+        
+        .activity-icon.maintenance {
+            background-color: #ddd6fe;
+            color: #7c3aed;
+        }
+        
+        .activity-info {
+            flex: 1;
+        }
+        
+        .activity-title-text {
+            font-size: 14px;
+            color: #1a1a1a;
+            margin-bottom: 2px;
+        }
+        
+        .activity-details {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .activity-time {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+        
+        .btn-primary {
+            background-color: #3b82f6;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #2563eb;
+        }
+        
+        .btn-secondary {
+            background-color: #f3f4f6;
+            color: #374151;
+            border: 1px solid #d1d5db;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #e5e7eb;
+        }
+        
+        .edit-profile-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 15px 25px;
+            font-size: 14px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            transition: all 0.3s;
+        }
+        
+        .edit-profile-btn:hover {
+            background-color: #2563eb;
+            transform: translateY(-2px);
+        }
+        
+        .achievements {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .achievement-badge {
+            padding: 6px 12px;
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            color: white;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .user-profile {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            display: flex;
+            align-items: center;
+            background: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            gap: 8px;
+            min-width: 180px;
+        }
+        
+        .user-profile.active .profile-arrow {
+            transform: rotate(180deg);
+            transition: transform 0.3s ease;
+        }
+        
+        .profile-arrow {
+            margin-left: auto;
+            color: #666;
+            transition: transform 0.3s ease;
+        }
+        
+        .profile-dropdown {
+            position: absolute;
+            bottom: 60px;
+            left: 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            overflow: hidden;
+            width: 180px;
+            display: none;
+            flex-direction: column;
+            z-index: 2000;
+        }
+        
+        .user-profile.active .profile-dropdown {
+            display: flex;
+            animation: fadeIn 0.2s ease-in-out;
+        }
+        
+        .profile-menu-item {
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #333;
+            text-decoration: none;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+        
+        .profile-menu-item:hover {
+            background-color: #f5f5f5;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @media (max-width: 768px) {
+            .profile-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .main-content {
+                padding: 15px;
+            }
+            
+            .sidebar {
+                width: 200px;
+            }
+            
+            body {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+            }
+            
+            .user-profile {
+                position: relative;
+                margin: 20px 0;
+            }
+            
+            .edit-profile-btn {
+                position: static;
+                margin: 20px 0;
+                border-radius: 8px;
+            }
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.4);
+        }
+        
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+        }
+        
+        .close:hover {
+            color: black;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">
+            <i class="fas fa-flask"></i>
+            LIMS
+        </div>
+        
+        <a href="index.html" class="nav-item">
+            <i class="fas fa-tachometer-alt"></i>
+            Dashboard
+        </a>
+        
+        <a href="departments.html" class="nav-item">
+            <i class="fas fa-building"></i>
+            Departments
+        </a>
+        
+        <a href="settings.html" class="nav-item">
+            <i class="fas fa-cog"></i>
+            Settings
+        </a>
+        
+        <div class="nav-item active">
+            <i class="fas fa-user"></i>
+            Profile
+        </div>
+    </div>
+    
+    <div class="main-content">
+        <div class="header">
+            <h1>My Profile</h1>
+            <p>View and manage your personal information and activity</p>
+        </div>
+        
+        <div class="profile-container">
+            <!-- Profile Overview Card -->
+            <div class="profile-card">
+                <div class="profile-header">
+                    <div class="profile-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="profile-name">Linu Lonappan</div>
+                    <div class="profile-role">Senior Lab Instructor</div>
+                    
+                    <div class="profile-stats">
+                        <div class="stat-item">
+                            <div class="stat-number">156</div>
+                            <div class="stat-label">Equipment Issued</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">89</div>
+                            <div class="stat-label">Active Sessions</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">3.2</div>
+                            <div class="stat-label">Years Experience</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="achievements">
+                    <div class="achievement-badge">
+                        <i class="fas fa-star"></i>
+                        Top Instructor
+                    </div>
+                    <div class="achievement-badge">
+                        <i class="fas fa-medal"></i>
+                        Safety Expert
+                    </div>
+                    <div class="achievement-badge">
+                        <i class="fas fa-trophy"></i>
+                        Equipment Master
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Profile Information -->
+            <div class="profile-card">
+                <div class="profile-info">
+                    <div class="info-section">
+                        <div class="section-title">
+                            <i class="fas fa-user"></i>
+                            Personal Information
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Full Name</span>
+                            <span class="info-value">Linu Lonappan</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Employee ID</span>
+                            <span class="info-value">LI-2021-089</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Email</span>
+                            <span class="info-value">linu.lonappan@institution.edu</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Phone</span>
+                            <span class="info-value">+91 9876543210</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Date of Birth</span>
+                            <span class="info-value">March 15, 1985</span>
+                        </div>
+                    </div>
+                    
+                    <div class="info-section">
+                        <div class="section-title">
+                            <i class="fas fa-briefcase"></i>
+                            Professional Details
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Department</span>
+                            <span class="info-value">Computer Science</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Position</span>
+                            <span class="info-value">Senior Lab Instructor</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Join Date</span>
+                            <span class="info-value">June 15, 2021</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Lab Location</span>
+                            <span class="info-value">CS-LAB-01, Building A</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Supervisor</span>
+                            <span class="info-value">Dr. Rajesh Kumar</span>
+                        </div>
+                    </div>
+                    
+                    <div class="info-section">
+                        <div class="section-title">
+                            <i class="fas fa-graduation-cap"></i>
+                            Qualifications
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Education</span>
+                            <span class="info-value">M.Tech Computer Science</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Certifications</span>
+                            <span class="info-value">Lab Safety, Equipment Management</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Specialization</span>
+                            <span class="info-value">Network Labs, Programming Labs</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recent Activity -->
+        <div class="profile-card activity-section">
+            <div class="activity-header">
+                <div class="activity-title">Recent Activity</div>
+                <div class="activity-filter">
+                    <button class="filter-btn active" onclick="filterActivity('all')">All</button>
+                    <button class="filter-btn" onclick="filterActivity('today')">Today</button>
+                    <button class="filter-btn" onclick="filterActivity('week')">This Week</button>
+                    <button class="filter-btn" onclick="filterActivity('month')">This Month</button>
+                </div>
+            </div>
+            
+            <div class="activity-list">
+                <div class="activity-item" data-time="today">
+                    <div class="activity-icon issued">
+                        <i class="fas fa-hand-holding"></i>
+                    </div>
+                    <div class="activity-info">
+                        <div class="activity-title-text">Equipment Issued to Jane Cooper</div>
+                        <div class="activity-details">10 Wires, 1 bulb - Experiment #12</div>
+                    </div>
+                    <div class="activity-time">2 hours ago</div>
+                </div>
+                
+                <div class="activity-item" data-time="today">
+                    <div class="activity-icon returned">
+                        <i class="fas fa-undo"></i>
+                    </div>
+                    <div class="activity-info">
+                        <div class="activity-title-text">Equipment Returned by Floyd Miles</div>
+                        <div class="activity-details">Network cables and router - Experiment #23</div>
+                    </div>
+                    <div class="activity-time">4 hours ago</div>
+                </div>
+                
+                <div class="activity-item" data-time="today">
+                    <div class="activity-icon damaged">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="activity-info">
+                        <div class="activity-title-text">Damaged Equipment Reported</div>
+                        <div class="activity-details">Oscilloscope #OS-45 reported faulty by Ronald Richards</div>
+                    </div>
+                    <div class="activity-time">6 hours ago</div>
+                </div>
+                
+                <div class="activity-item" data-time="week">
+                    <div class="activity-icon issued">
+                        <i class="fas fa-hand-holding"></i>
+                    </div>
+                    <div class="activity-info">
+                        <div class="activity-title-text">Bulk Equipment Issue</div>
+                        <div class="activity-details">25 Multimeters issued for Electronics Lab Session</div>
+                    </div>
+                    <div class="activity-time">Yesterday</div>
+                </div>
+                
+                <div class="activity-item" data-time="week">
+                    <div class="activity-icon returned">
+                        <i class="fas fa-undo"></i>
+                    </div>
+                    <div class="activity-info">
+                        <div class="activity-title-text">Lab Session Completed</div>
+                        <div class="activity-details">All equipment from morning session returned and verified</div>
+                    </div>
+                    <div class="activity-time">Yesterday</div>
+                </div>
+                
+                <div class="activity-item" data-time="week">
+                    <div class="activity-icon maintenance">
+                        <i class="fas fa-tools"></i>
+                    </div>
+                    <div class="activity-info">
+                        <div class="activity-title-text">Equipment Maintenance Scheduled</div>
+                        <div class="activity-details">Quarterly maintenance for all lab computers</div>
+                    </div>
+                    <div class="activity-time">3 days ago</div>
+                </div>
+                
+                <div class="activity-item" data-time="month">
+                    <div class="activity-icon issued">
+                        <i class="fas fa-hand-holding"></i>
+                    </div>
+                    <div class="activity-info">
+                        <div class="activity-title-text">New Equipment Cataloged</div>
+                        <div class="activity-details">15 new Arduino kits added to inventory</div>
+                    </div>
+                    <div class="activity-time">1 week ago</div>
+                </div>
+                
+                <div class="activity-item" data-time="month">
+                    <div class="activity-icon returned">
+                        <i class="fas fa-undo"></i>
+                    </div>
+                    <div class="activity-info">
+                        <div class="activity-title-text">Monthly Inventory Check</div>
+                        <div class="activity-details">All equipment accounted for and verified</div>
+                    </div>
+                    <div class="activity-time">2 weeks ago</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Edit Profile Button -->
+    <button class="edit-profile-btn" onclick="openEditModal()">
+        <i class="fas fa-edit"></i>
+        Edit Profile
+    </button>
+    
+    <!-- User Profile Dropdown -->
+    <div class="user-profile" onclick="toggleProfileDropdown()">
+        <div class="profile-avatar" style="width: 32px; height: 32px; font-size: 14px; background: #3b82f6; color: white;">
+            <i class="fas fa-user"></i>
+        </div>
+        <span style="font-size: 14px; font-weight: 500;">Linu L.</span>
+        <i class="fas fa-chevron-up profile-arrow"></i>
+        
+        <div class="profile-dropdown">
+            <a href="#" class="profile-menu-item">
+                <i class="fas fa-user"></i>
+                View Profile
+            </a>
+            <a href="#" class="profile-menu-item">
+                <i class="fas fa-cog"></i>
+                Settings
+            </a>
+            <a href="#" class="profile-menu-item">
+                <i class="fas fa-question-circle"></i>
+                Help
+            </a>
+            <a href="#" class="profile-menu-item">
+                <i class="fas fa-sign-out-alt"></i>
+                Logout
+            </a>
+        </div>
+    </div>
+    
+    <!-- Edit Profile Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeEditModal()">&times;</span>
+            <h2 style="margin-bottom: 20px; color: #1a1a1a;">Edit Profile</h2>
+            
+            <form id="editProfileForm">
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" class="form-input" value="Linu Lonappan" id="fullName">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-input" value="linu.lonappan@institution.edu" id="email">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Phone</label>
+                    <input type="tel" class="form-input" value="+91 9876543210" id="phone">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Department</label>
+                    <select class="form-input" id="department">
+                        <option value="Computer Science" selected>Computer Science</option>
+                        <option value="Electronics">Electronics</option>
+                        <option value="Mechanical">Mechanical</option>
+                        <option value="Physics">Physics</option>
+                        <option value="Chemistry">Chemistry</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Lab Location</label>
+                    <input type="text" class="form-input" value="CS-LAB-01, Building A" id="labLocation">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Specialization</label>
+                    <input type="text" class="form-input" value="Network Labs, Programming Labs" id="specialization">
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Profile dropdown functionality
+        function toggleProfileDropdown() {
+            const userProfile = document.querySelector('.user-profile');
+            userProfile.classList.toggle('active');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const userProfile = document.querySelector('.user-profile');
+            if (!userProfile.contains(event.target)) {
+                userProfile.classList.remove('active');
+            }
+        });
+
+        // Activity filter functionality
+        function filterActivity(filter) {
+            const buttons = document.querySelectorAll('.filter-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            const activities = document.querySelectorAll('.activity-item');
+            activities.forEach(activity => {
+                if (filter === 'all') {
+                    activity.style.display = 'flex';
+                } else {
+                    const timeData = activity.getAttribute('data-time');
+                    if (timeData === filter) {
+                        activity.style.display = 'flex';
+                    } else {
+                        activity.style.display = 'none';
+                    }
+                }
+            });
+        }
+
+        // Modal functionality
+        function openEditModal() {
+            document.getElementById('editModal').style.display = 'block';
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('editModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Form submission
+        document.getElementById('editProfileForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form values
+            const formData = {
+                fullName: document.getElementById('fullName').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                department: document.getElementById('department').value,
+                labLocation: document.getElementById('labLocation').value,
+                specialization: document.getElementById('specialization').value
+            };
+            
+            // Update profile information in the UI
+            updateProfileInfo(formData);
+            
+            // Close modal
+            closeEditModal();
+            
+            // Show success message
+            showNotification('Profile updated successfully!', 'success');
+        });
+
+        function updateProfileInfo(data) {
+            // Update profile name
+            document.querySelector('.profile-name').textContent = data.fullName;
+            
+            // Update info items
+            const infoItems = document.querySelectorAll('.info-item');
+            infoItems.forEach(item => {
+                const label = item.querySelector('.info-label').textContent;
+                const valueElement = item.querySelector('.info-value');
+                
+                switch(label) {
+                    case 'Full Name':
+                        valueElement.textContent = data.fullName;
+                        break;
+                    case 'Email':
+                        valueElement.textContent = data.email;
+                        break;
+                    case 'Phone':
+                        valueElement.textContent = data.phone;
+                        break;
+                    case 'Department':
+                        valueElement.textContent = data.department;
+                        break;
+                    case 'Lab Location':
+                        valueElement.textContent = data.labLocation;
+                        break;
+                    case 'Specialization':
+                        valueElement.textContent = data.specialization;
+                        break;
+                }
+            });
+            
+            // Update user profile dropdown name
+            const userProfileName = document.querySelector('.user-profile span');
+            const firstName = data.fullName.split(' ')[0];
+            const lastInitial = data.fullName.split(' ')[1] ? data.fullName.split(' ')[1][0] : '';
+            userProfileName.textContent = `${firstName} ${lastInitial}.`;
+        }
+
+        function showNotification(message, type) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <i class="fas fa-check-circle"></i>
+                <span>${message}</span>
+            `;
+            
+            // Style the notification
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'success' ? '#10b981' : '#ef4444'};
+                color: white;
+                padding: 15px 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                z-index: 10000;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 14px;
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add smooth scrolling
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+            
+            // Add loading animation to stats
+            animateStats();
+        });
+
+        function animateStats() {
+            const statNumbers = document.querySelectorAll('.stat-number');
+            const finalValues = [156, 89, 3.2];
+            
+            statNumbers.forEach((stat, index) => {
+                const finalValue = finalValues[index];
+                let currentValue = 0;
+                const increment = finalValue / 50;
+                const timer = setInterval(() => {
+                    currentValue += increment;
+                    if (currentValue >= finalValue) {
+                        stat.textContent = finalValue;
+                        clearInterval(timer);
+                    } else {
+                        stat.textContent = Math.floor(currentValue);
+                    }
+                }, 30);
+            });
+        }
+
+        // Add keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // ESC to close modal
+            if (e.key === 'Escape') {
+                closeEditModal();
+            }
+            
+            // Ctrl/Cmd + E to edit profile
+            if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
+                e.preventDefault();
+                openEditModal();
+            }
+        });
+
+        // Add responsive behavior
+        function handleResize() {
+            const sidebar = document.querySelector('.sidebar');
+            const mainContent = document.querySelector('.main-content');
+            
+            if (window.innerWidth <= 768) {
+                sidebar.style.position = 'fixed';
+                sidebar.style.transform = 'translateX(-100%)';
+                sidebar.style.zIndex = '1000';
+                mainContent.style.marginLeft = '0';
+            } else {
+                sidebar.style.position = 'static';
+                sidebar.style.transform = 'none';
+                mainContent.style.marginLeft = '0';
+            }
+        }
+
+        window.addEventListener('resize', handleResize);
+        handleResize(); // Call on load
+
+        // Toggle sidebar on mobile
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const isOpen = sidebar.style.transform === 'translateX(0px)';
+            sidebar.style.transform = isOpen ? 'translateX(-100%)' : 'translateX(0px)';
+        }
+
+        // Add mobile menu button for smaller screens
+        if (window.innerWidth <= 768) {
+            const menuButton = document.createElement('button');
+            menuButton.innerHTML = '<i class="fas fa-bars"></i>';
+            menuButton.className = 'mobile-menu-btn';
+            menuButton.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 20px;
+                background: #3b82f6;
+                color: white;
+                border: none;
+                padding: 10px;
+                border-radius: 6px;
+                font-size: 16px;
+                cursor: pointer;
+                z-index: 1001;
+                display: block;
+            `;
+            menuButton.onclick = toggleSidebar;
+            document.body.appendChild(menuButton);
+        }
+    </script>
+</body>
+</html>

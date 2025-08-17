@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIMS - Reports</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8f9fa;
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .sidebar {
+            width: 250px;
+            background-color: #1a1a1a;
+            color: white;
+            padding: 20px 0;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            padding: 0 20px 30px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #3b82f6;
+        }
+        
+        .logo i {
+            margin-right: 10px;
+            font-size: 28px;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: #ccc;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .nav-item.active {
+            background-color: #333;
+            color: white;
+        }
+        
+        .nav-item:hover {
+            background-color: #333;
+            color: white;
+        }
+        
+        .nav-item i {
+            margin-right: 15px;
+            width: 20px;
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 30px;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .header-left h1 {
+            font-size: 24px;
+            color: #1a1a1a;
+            margin-bottom: 5px;
+        }
+        
+        .header-left p {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .report-filters {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .filter-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+        }
+        
+        .filter-select {
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            background-color: white;
+        }
+        
+        .filter-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary {
+            background-color: #3b82f6;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #2563eb;
+        }
+        
+        .btn-secondary {
+            background-color: white;
+            color: #666;
+            border: 1px solid #ddd;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .reports-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .report-card {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .report-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .report-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        
+        .report-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 16px;
+            font-size: 24px;
+        }
+        
+        .report-icon.equipment {
+            background-color: #dcfce7;
+            color: #16a34a;
+        }
+        
+        .report-icon.usage {
+            background-color: #dbeafe;
+            color: #3b82f6;
+        }
+        
+        .report-icon.maintenance {
+            background-color: #fef3c7;
+            color: #f59e0b;
+        }
+        
+        .report-icon.inventory {
+            background-color: #fce7f3;
+            color: #ec4899;
+        }
+        
+        .report-info h3 {
+            font-size: 18px;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+        }
+        
+        .report-info p {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .report-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #eee;
+        }
+        
+        .report-date {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .report-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .action-btn {
+            padding: 6px 12px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .action-btn:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .recent-reports {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .section-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            color: #1a1a1a;
+        }
+        
+        .reports-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .reports-table th {
+            background-color: #f8f9fa;
+            padding: 12px;
+            text-align: left;
+            font-weight: 500;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .reports-table td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+        
+        .reports-table tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .status-completed {
+            background-color: #dcfce7;
+            color: #16a34a;
+        }
+        
+        .status-pending {
+            background-color: #fef3c7;
+            color: #f59e0b;
+        }
+        
+        .status-scheduled {
+            background-color: #dbeafe;
+            color: #3b82f6;
+        }
+        
+        .user-profile {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    display: flex;
+    align-items: center;
+    background: white;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    gap: 8px;
+}
+
+/* Arrow rotation when active */
+.user-profile.active .profile-arrow {
+    transform: rotate(180deg);
+    transition: transform 0.3s ease;
+}
+
+.profile-arrow {
+    margin-left: auto;
+    color: #666;
+    transition: transform 0.3s ease;
+}
+
+/* Dropdown styling */
+.profile-dropdown {
+    position: absolute;
+    bottom: 60px; /* keeps dropdown above button */
+    left: 0;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    overflow: hidden;
+    width: 180px;
+    display: none; /* hide by default */
+    flex-direction: column;
+    z-index: 2000;
+}
+
+/* Show dropdown when active */
+.user-profile.active .profile-dropdown {
+    display: flex;
+    animation: fadeIn 0.2s ease-in-out;
+}
+
+/* Dropdown items */
+.profile-menu-item {
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #333;
+    text-decoration: none;
+    font-size: 14px;
+    transition: background 0.2s;
+}
+
+.profile-menu-item:hover {
+    background-color: #f5f5f5;
+}
+
+/* Fade animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">
+            <i class="fas fa-flask"></i>
+            LIMS
+        </div>
+        
+        <a class="nav-item" href="lab-incharge-dashboard.html">
+            <i class="fas fa-tachometer-alt"></i>
+            Dashboard
+        </a>
+
+        <a class="nav-item" href="lab_incharge_departments.html">
+            <i class="fas fa-building"></i>
+            Departments
+        </a>
+
+        <a class="nav-item" href="lab_incharge_statistics.html">
+            <i class="fas fa-chart-bar"></i>
+            Statistics
+        </a>
+
+        <a class="nav-item" href="lab_incharge_settings.html">
+            <i class="fas fa-cog"></i>
+            Settings
+        </a>
+
+        <a class="nav-item active" href="#report">
+            <i class="fas fa-file-alt"></i>
+            Report
+        </a>
+    </div>
+    
+    <div class="main-content">
+        <div class="header">
+            <div class="header-left">
+                <h1>Reports & Analytics</h1>
+                <p>Generate and download comprehensive laboratory reports</p>
+            </div>
+        </div>
+        
+        <div class="report-filters">
+            <div class="filters-grid">
+                <div class="filter-group">
+                    <label class="filter-label">Report Type</label>
+                    <select class="filter-select">
+                        <option>Equipment Status Report</option>
+                        <option>Usage Analytics</option>
+                        <option>Maintenance Schedule</option>
+                        <option>Inventory Summary</option>
+                        <option>Department Performance</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label class="filter-label">Date Range</label>
+                    <select class="filter-select">
+                        <option>Last 7 Days</option>
+                        <option>Last 30 Days</option>
+                        <option>Last 3 Months</option>
+                        <option>Last 6 Months</option>
+                        <option>Last Year</option>
+                        <option>Custom Range</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label class="filter-label">Department</label>
+                    <select class="filter-select">
+                        <option>All Departments</option>
+                        <option>Microbiology Lab</option>
+                        <option>Chemistry Lab</option>
+                        <option>Physics Lab</option>
+                        <option>Genetics Lab</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label class="filter-label">Format</label>
+                    <select class="filter-select">
+                        <option>PDF Report</option>
+                        <option>Excel Spreadsheet</option>
+                        <option>CSV Data</option>
+                        <option>JSON Export</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="filter-actions">
+                <button class="btn btn-primary" onclick="generateReport()">
+                    <i class="fas fa-file-download"></i>
+                    Generate Report
+                </button>
+                <button class="btn btn-secondary" onclick="scheduleReport()">
+                    <i class="fas fa-calendar"></i>
+                    Schedule Report
+                </button>
+                <button class="btn btn-secondary" onclick="previewReport()">
+                    <i class="fas fa-eye"></i>
+                    Preview
+                </button>
+            </div>
+        </div>
+        
+        <div class="reports-grid">
+            <div class="report-card">
+                <div class="report-header">
+                    <div class="report-icon equipment">
+                        <i class="fas fa-desktop"></i>
+                    </div>
+                    <div class="report-info">
+                        <h3>Equipment Status Report</h3>
+                        <p>Complete overview of all equipment conditions and availability</p>
+                    </div>
+                </div>
+                <div class="report-meta">
+                    <span class="report-date">Updated: 2 hours ago</span>
+                    <div class="report-actions">
+                        <button class="action-btn" onclick="downloadReport('equipment')">
+                            <i class="fas fa-download"></i> Download
+                        </button>
+                        <button class="action-btn" onclick="viewReport('equipment')">
+                            <i class="fas fa-eye"></i> View
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="report-card">
+                <div class="report-header">
+                    <div class="report-icon usage">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="report-info">
+                        <h3>Usage Analytics</h3>
+                        <p>Detailed analysis of equipment usage patterns and trends</p>
+                    </div>
+                </div>
+                <div class="report-meta">
+                    <span class="report-date">Updated: 1 day ago</span>
+                    <div class="report-actions">
+                        <button class="action-btn" onclick="downloadReport('usage')">
+                            <i class="fas fa-download"></i> Download
+                        </button>
+                        <button class="action-btn" onclick="viewReport('usage')">
+                            <i class="fas fa-eye"></i> View
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="report-card">
+                <div class="report-header">
+                    <div class="report-icon maintenance">
+                        <i class="fas fa-wrench"></i>
+                    </div>
+                    <div class="report-info">
+                        <h3>Maintenance Schedule</h3>
+                        <p>Upcoming and overdue maintenance tasks across all departments</p>
+                    </div>
+                </div>
+                <div class="report-meta">
+                    <span class="report-date">Updated: 3 hours ago</span>
+                    <div class="report-actions">
+                        <button class="action-btn" onclick="downloadReport('maintenance')">
+                            <i class="fas fa-download"></i> Download
+                        </button>
+                        <button class="action-btn" onclick="viewReport('maintenance')">
+                            <i class="fas fa-eye"></i> View
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="report-card">
+                <div class="report-header">
+                    <div class="report-icon inventory">
+                        <i class="fas fa-boxes"></i>
+                    </div>
+                    <div class="report-info">
+                        <h3>Inventory Summary</h3>
+                        <p>Current inventory levels and supply chain status</p>
+                    </div>
+                </div>
+                <div class="report-meta">
+                    <span class="report-date">Updated: 5 hours ago</span>
+                    <div class="report-actions">
+                        <button class="action-btn" onclick="downloadReport('inventory')">
+                            <i class="fas fa-download"></i> Download
+                        </button>
+                        <button class="action-btn" onclick="viewReport('inventory')">
+                            <i class="fas fa-eye"></i> View
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="recent-reports">
+            <div class="section-header">
+                <div class="section-title">Recent Report Activity</div>
+            </div>
+            
+            <table class="reports-table">
+                <thead>
+                    <tr>
+                        <th>Report Name</th>
+                        <th>Type</th>
+                        <th>Generated By</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Monthly Equipment Summary</td>
+                        <td>Equipment Report</td>
+                        <td>Linu Lonappan</td>
+                        <td>Dec 15, 2024</td>
+                        <td><span class="status-badge status-completed">Completed</span></td>
+                        <td>
+                            <button class="action-btn">Download</button>
+                            <button class="action-btn">Share</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Weekly Usage Analytics</td>
+                        <td>Usage Report</td>
+                        <td>System Auto</td>
+                        <td>Dec 14, 2024</td>
+                        <td><span class="status-badge status-completed">Completed</span></td>
+                        <td>
+                            <button class="action-btn">Download</button>
+                            <button class="action-btn">Share</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Maintenance Schedule Q1</td>
+                        <td>Maintenance Report</td>
+                        <td>Dr. Sarah Johnson</td>
+                        <td>Dec 13, 2024</td>
+                        <td><span class="status-badge status-pending">Processing</span></td>
+                        <td>
+                            <button class="action-btn">View</button>
+                            <button class="action-btn">Cancel</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Inventory Audit Report</td>
+                        <td>Inventory Report</td>
+                        <td>Prof. Michael Chen</td>
+                        <td>Dec 12, 2024</td>
+                        <td><span class="status-badge status-scheduled">Scheduled</span></td>
+                        <td>
+                            <button class="action-btn">Edit</button>
+                            <button class="action-btn">Cancel</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Department Performance Review</td>
+                        <td>Performance Report</td>
+                        <td>Linu Lonappan</td>
+                        <td>Dec 11, 2024</td>
+                        <td><span class="status-badge status-completed">Completed</span></td>
+                        <td>
+                            <button class="action-btn">Download</button>
+                            <button class="action-btn">Share</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="user-profile" onclick="toggleProfile()">
+    <img src="/placeholder.svg?height=40&width=40" alt="User" class="user-avatar">
+    <div class="user-info">
+        <h4>Linu Lonappan</h4>
+        <p>Lab Instructor</p>
+    </div>
+    <i class="fas fa-chevron-up profile-arrow"></i>
+    
+    <!-- Profile dropdown menu -->
+    <div class="profile-dropdown">
+        <a href="lab_instructor_profile.html" class="profile-menu-item">
+            <i class="fas fa-user"></i>
+            <span>View Profile</span>
+        </a>
+        <a href="lab_instructor_settings.html" class="profile-menu-item">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+        </a>
+        <div class="profile-menu-item" onclick="handleLogout()">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Logout</span>
+        </div>
+    </div>
+</div>
+
+    <script>
+        function generateReport() {
+            // Simulate report generation
+            const reportType = document.querySelector('.filter-select').value;
+            alert(`Generating ${reportType}... This may take a few minutes.`);
+            
+            // In a real application, this would trigger the report generation process
+            setTimeout(() => {
+                alert('Report generated successfully! Check your downloads folder.');
+            }, 2000);
+        }
+        
+        function scheduleReport() {
+            const reportType = document.querySelector('.filter-select').value;
+            const schedule = prompt('Enter schedule (daily, weekly, monthly):', 'weekly');
+            if (schedule) {
+                alert(`${reportType} scheduled to run ${schedule}.`);
+            }
+        }
+        
+        function previewReport() {
+            alert('Opening report preview...');
+            // In a real application, this would open a modal or new window with report preview
+        }
+        
+        function downloadReport(type) {
+            alert(`Downloading ${type} report...`);
+            // In a real application, this would trigger the file download
+        }
+        
+        function viewReport(type) {
+            alert(`Opening ${type} report...`);
+            // In a real application, this would navigate to the report view
+        }
+        function toggleProfile() {
+    const profile = document.querySelector('.user-profile');
+    profile.classList.toggle('active');
+}
+
+function handleLogout() {
+    if(confirm('Are you sure you want to logout?')) {
+        // Add logout logic here
+        window.location.href = '../login.html'; // Adjust path as needed
+    }
+}
+
+// Close profile dropdown when clicking outside
+document.addEventListener('click', function(event) {
+    const profile = document.querySelector('.user-profile');
+    if (!profile.contains(event.target)) {
+        profile.classList.remove('active');
+    }
+});
+    </script>
+</body>
+</html>
